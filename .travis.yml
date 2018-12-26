@@ -7,6 +7,8 @@ cache:
 node_js: lts/*
 jobs:
   include:
+    - stage: commitlint
+      script: npx @commitlint/travis-cli
     - stage: release
       if: branch = master
       node_js: lts/*
