@@ -80,13 +80,16 @@ export function bind(makeBus: IMakeBus, handlers: IHandler[]) {
 
     const effects = most.tap((actionsMap: ActionTypeMap) => {
       const action = from(actionsMap);
-      const { prefixes } = makeBus;
+      const { prefixes, emit } = makeBus;
 
-      const bus: Bus = Object.keys(prefixes).reduce((memo, key) => {
-        const fn = prefixes[key] as MakeSimpleEmit;
+      const bus: Bus = Object.keys(prefixes).reduce(
+        (memo, key) => {
+          const fn = prefixes[key] as MakeSimpleEmit;
 
-        return { ...memo, [key]: fn(action) };
-      }, {});
+          return { ...memo, [key]: fn(action) };
+        },
+        { emit }
+      );
 
       handler(action, bus);
     }, sources);
