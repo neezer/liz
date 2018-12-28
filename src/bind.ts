@@ -78,7 +78,7 @@ export function bind(makeBus: IMakeBus, handlers: IHandler[]) {
       ofTypes
     );
 
-    const effects = most.tap((actionsMap: ActionTypeMap) => {
+    const effects = most.map(async (actionsMap: ActionTypeMap) => {
       const action = from(actionsMap);
       const { prefixes, emit } = makeBus;
 
@@ -91,10 +91,10 @@ export function bind(makeBus: IMakeBus, handlers: IHandler[]) {
         { emit }
       );
 
-      handler(action, bus);
+      await handler(action, bus);
     }, sources);
 
-    most.runEffects(effects, newDefaultScheduler());
+    most.runEffects(most.awaitPromises(effects), newDefaultScheduler());
   }
 
   handlers.forEach(({ types, handler }) => {
