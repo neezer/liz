@@ -23,7 +23,7 @@ export type SimpleEmit = (
 ) => void;
 
 export type MakeSimpleEmit = (action: Action, appId?: string) => SimpleEmit;
-export type Bus = Record<string, SimpleEmit | Emit<Action>>;
+export type Bus = Record<string, SimpleEmit>;
 
 export interface IMakeBus {
   emit: Emit<Action>;

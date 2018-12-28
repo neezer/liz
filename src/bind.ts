@@ -3,11 +3,22 @@ import { newDefaultScheduler } from "@most/scheduler";
 import { Action, ActionTypeMap, from } from "@neezer/action";
 import { ofType } from "@neezer/action-combinators";
 import { Bus, IMakeBus, MakeSimpleEmit } from ".";
+import { Emit } from "./update";
 
 type CorrelationId = string;
 
+interface IBareEmits {
+  emit: Emit<Action>;
+  emitError: Emit<Error>;
+}
+
 export type MatchingActionMap = Record<CorrelationId, ActionTypeMap>;
-export type Handler = (prevAction: Action, bus: Bus) => void;
+
+export type Handler = (
+  prevAction: Action,
+  bus: Bus,
+  bareEmits: IBareEmits
+) => void;
 
 export interface IHandler {
   types: string[];
@@ -82,16 +93,13 @@ export function bind(makeBus: IMakeBus, handlers: IHandler[]) {
       const action = from(actionsMap);
       const { prefixes, emit } = makeBus;
 
-      const bus: Bus = Object.keys(prefixes).reduce(
-        (memo, key) => {
-          const fn = prefixes[key] as MakeSimpleEmit;
+      const bus: Bus = Object.keys(prefixes).reduce((memo, key) => {
+        const fn = prefixes[key] as MakeSimpleEmit;
 
-          return { ...memo, [key]: fn(action) };
-        },
-        { emit }
-      );
+        return { ...memo, [key]: fn(action) };
+      }, {});
 
-      await handler(action, bus);
+      await handler(action, bus, { emit, emitError });
     }, sources);
 
     const recover = (error: Error) => {
