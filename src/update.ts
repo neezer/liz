@@ -3,10 +3,10 @@ import { currentTime } from "@most/scheduler";
 import { Scheduler, Sink, Stream, Time } from "@most/types";
 import EventEmitter from "eventemitter3";
 
-export type Emit = <T>(value: T) => void;
+export type Emit<T> = (value: T) => void;
 
 export interface IUpdate<T> {
-  emit: Emit;
+  emit: Emit<T>;
   stream: Stream<T>;
 }
 

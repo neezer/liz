@@ -12,6 +12,7 @@ type DefaultCheckin = string;
 
 export type Prefix = [PrefixValue, DefaultCheckin?];
 export type ActionStream = Stream<Action>;
+export type ErrorStream = Stream<Error>;
 export type Combinator = (stream: ActionStream) => ActionStream;
 export type On = (type: string, combinator: Combinator) => void;
 
@@ -22,11 +23,13 @@ export type SimpleEmit = (
 ) => void;
 
 export type MakeSimpleEmit = (action: Action, appId?: string) => SimpleEmit;
-export type Bus = Record<string, SimpleEmit>;
+export type Bus = Record<string, SimpleEmit | Emit<Action>>;
 
 export interface IMakeBus {
-  emit: Emit;
+  emit: Emit<Action>;
+  emitError: Emit<Error>;
   stream: ActionStream;
+  errors: ErrorStream;
   prefixes: Record<string, MakeSimpleEmit>;
 }
 
@@ -38,6 +41,7 @@ export function makeUpdater<T>() {
 
 export function make(emitDerivativePrefixes: Prefix[]): IMakeBus {
   const { stream, emit } = makeUpdater<Action>();
+  const { stream: errorStream, emit: emitError } = makeUpdater<Error>();
 
   const boundEmits = emitDerivativePrefixes.reduce(
     (memo, [prefix, defaultCheckin]) => {
@@ -51,11 +55,11 @@ export function make(emitDerivativePrefixes: Prefix[]): IMakeBus {
     {}
   );
 
-  return { emit, stream, prefixes: boundEmits };
+  return { emit, stream, prefixes: boundEmits, errors: errorStream, emitError };
 }
 
 interface IMakeEmitDerivative {
-  emit: Emit;
+  emit: Emit<Action>;
   prefixFn: (prefix: string) => string;
   defaultCheckin?: string;
 }

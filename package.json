@@ -27,7 +27,6 @@
     "eventemitter3": "^3.1.0"
   },
   "scripts": {
-    "build": "yarn clean && tsc",
-    "clean": "rimraf dist"
+    "build": "rimraf dist && tsc"
   }
 }

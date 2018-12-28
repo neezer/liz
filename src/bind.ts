@@ -20,7 +20,7 @@ type Accumulator = (
 ) => most.SeedValue<MatchingActionMap, ActionTypeMap>;
 
 export function bind(makeBus: IMakeBus, handlers: IHandler[]) {
-  const { stream } = makeBus;
+  const { stream, emitError } = makeBus;
 
   function handleTypes(params: IHandler) {
     const { types, handler } = params;
@@ -94,7 +94,16 @@ export function bind(makeBus: IMakeBus, handlers: IHandler[]) {
       await handler(action, bus);
     }, sources);
 
-    most.runEffects(most.awaitPromises(effects), newDefaultScheduler());
+    const recover = (error: Error) => {
+      emitError(error);
+
+      return most.awaitPromises(effects);
+    };
+
+    most.runEffects(
+      most.recoverWith(recover, most.awaitPromises(effects)),
+      newDefaultScheduler()
+    );
   }
 
   handlers.forEach(({ types, handler }) => {
