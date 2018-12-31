@@ -30,7 +30,11 @@ type Accumulator = (
   action: Action
 ) => most.SeedValue<MatchingActionMap, ActionTypeMap>;
 
-export function bind(makeBus: IMakeBus, handlers: IHandler[]) {
+export function bind(
+  makeBus: IMakeBus,
+  handlers: IHandler[],
+  inject: Record<string, any> = {}
+) {
   const { stream, emitError } = makeBus;
 
   function handleTypes(params: IHandler) {
@@ -99,7 +103,7 @@ export function bind(makeBus: IMakeBus, handlers: IHandler[]) {
         return { ...memo, [key]: fn(action) };
       }, {});
 
-      await handler(action, bus, { emit, emitError });
+      await handler(action, bus, { emit, emitError, ...inject });
     }, sources);
 
     const recover = (error: Error) => {
