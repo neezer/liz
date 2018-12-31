@@ -7,18 +7,14 @@ import { Emit } from "./update";
 
 type CorrelationId = string;
 
-interface IBareEmits {
+interface IInjects {
   emit: Emit<Action>;
   emitError: Emit<Error>;
+  [name: string]: any;
 }
 
 export type MatchingActionMap = Record<CorrelationId, ActionTypeMap>;
-
-export type Handler = (
-  prevAction: Action,
-  bus: Bus,
-  bareEmits: IBareEmits
-) => void;
+export type Handler = (prevAction: Action, bus: Bus, injects: IInjects) => void;
 
 export interface IHandler {
   types: string[];
