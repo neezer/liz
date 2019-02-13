@@ -22,7 +22,7 @@
   "dependencies": {
     "@most/core": "^1.3.2",
     "@most/scheduler": "^1.2.1",
-    "@neezer/action": "^1.0.0",
+    "@neezer/action": "^1.0.1",
     "@neezer/action-combinators": "^1.0.0",
     "eventemitter3": "^3.1.0"
   },
