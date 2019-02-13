@@ -11,6 +11,8 @@
   "license": "MIT",
   "devDependencies": {
     "@commitlint/config-conventional": "^7.5.0",
+    "@neezer/action": "^1.0.1",
+    "@neezer/action-combinators": "^1.0.1",
     "@most/types": "^1.0.1",
     "@types/node": "^10.12.12",
     "prettier": "^1.15.3",
@@ -20,11 +22,13 @@
     "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.2.2"
   },
+  "peerDependencies": {
+    "@neezer/action": "^1.0.1",
+    "@neezer/action-combinators": "^1.0.1"
+  },
   "dependencies": {
     "@most/core": "^1.3.2",
     "@most/scheduler": "^1.2.1",
-    "@neezer/action": "^1.0.1",
-    "@neezer/action-combinators": "^1.0.0",
     "eventemitter3": "^3.1.0"
   },
   "scripts": {
