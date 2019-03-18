@@ -2,10 +2,12 @@ import * as most from "@most/core";
 import { newDefaultScheduler } from "@most/scheduler";
 import { Action, ActionTypeMap, from } from "@neezer/action";
 import { ofType } from "@neezer/action-combinators";
+import nanoid from "nanoid";
 import { Bus, IMakeBus, MakeSimpleEmit } from ".";
 import { Emit } from "./update";
 
 type CorrelationId = string;
+type HandlerId = string;
 
 interface IInjects {
   emit: Emit<Action>;
@@ -37,6 +39,7 @@ export function bind(
     const { types, handler } = params;
     const ofTypes = most.mergeArray(types.map(type => ofType(type, stream)));
     const numTypes = types.length;
+    const handlerId = nanoid();
 
     const accumulator: Accumulator = (seed, action) => {
       const latestSeed = scrubOutdatedSeedKeys(seed);
@@ -47,8 +50,13 @@ export function bind(
         return noop;
       }
 
-      const matchingSeedKey = findMatchingSeedKey(latestSeed, correlationId);
-      const newSeedKey = makeSeedKey(correlationId);
+      const matchingSeedKey = findMatchingSeedKey(
+        latestSeed,
+        correlationId,
+        handlerId
+      );
+
+      const newSeedKey = makeSeedKey(correlationId, handlerId);
       const matchingTypes = latestSeed[matchingSeedKey || ""];
       const numMatching = Object.keys(matchingTypes || {}).length;
       const isComplete = numMatching + 1 === numTypes;
@@ -121,19 +129,23 @@ export function bind(
 
 function findMatchingSeedKey(
   seed: MatchingActionMap,
-  correlationId: CorrelationId
+  correlationId: CorrelationId,
+  handlerId: HandlerId
 ) {
   const keys = Object.keys(seed);
 
   return keys.find(key => {
-    const { correlationId: seedCorrelationId } = dissectSeedKey(key);
+    const {
+      correlationId: seedCorrelationId,
+      handlerId: seedHandlerId
+    } = dissectSeedKey(key);
 
-    return seedCorrelationId === correlationId;
+    return seedHandlerId === handlerId && seedCorrelationId === correlationId;
   });
 }
 
-function makeSeedKey(correlationId: CorrelationId) {
-  return `${correlationId},${Date.now()}`;
+function makeSeedKey(correlationId: CorrelationId, handlerId: HandlerId) {
+  return `${correlationId},${handlerId},${Date.now()}`;
 }
 
 function isSeedKeyExpired(seedKey: string) {
@@ -148,7 +160,8 @@ function dissectSeedKey(seedKey: string) {
 
   return {
     correlationId: parts[0],
-    timestamp: Number(parts[1])
+    handlerId: parts[1],
+    timestamp: Number(parts[2])
   };
 }
 
