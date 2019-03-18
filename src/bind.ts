@@ -26,7 +26,7 @@ export interface IHandler {
 type Accumulator = (
   seed: MatchingActionMap,
   action: Action
-) => most.SeedValue<MatchingActionMap, ActionTypeMap>;
+) => most.SeedValue<MatchingActionMap, ActionTypeMap | undefined>;
 
 export function bind(
   makeBus: IMakeBus,
@@ -43,7 +43,7 @@ export function bind(
 
     const accumulator: Accumulator = (seed, action) => {
       const latestSeed = scrubOutdatedSeedKeys(seed);
-      const noop = { seed: latestSeed, value: {} };
+      const noop = { seed: latestSeed, value: undefined };
       const correlationId = action.meta.correlationId;
 
       if (correlationId === undefined) {
@@ -67,7 +67,7 @@ export function bind(
             ...latestSeed,
             [newSeedKey]: { [action.type]: action }
           },
-          value: {}
+          value: undefined
         };
       }
 
@@ -87,27 +87,31 @@ export function bind(
           ...omit([matchingSeedKey as string], latestSeed),
           [newSeedKey]: updatedCorrelated
         },
-        value: {}
+        value: undefined
       };
     };
 
-    const sources = most.loop<Action, ActionTypeMap, MatchingActionMap>(
-      accumulator,
-      {},
-      ofTypes
-    );
+    const sources = most.loop<
+      Action,
+      ActionTypeMap | undefined,
+      MatchingActionMap
+    >(accumulator, {}, ofTypes);
 
-    const effects = most.map(async (actionsMap: ActionTypeMap) => {
-      const action = from(actionsMap);
-      const { prefixes, emit } = makeBus;
+    const effects = most.map(async (actionsMap: ActionTypeMap | undefined) => {
+      if (actionsMap === undefined) {
+        return Promise.resolve();
+      } else {
+        const action = from(actionsMap);
+        const { prefixes, emit } = makeBus;
 
-      const bus: Bus = Object.keys(prefixes).reduce((memo, key) => {
-        const fn = prefixes[key] as MakeSimpleEmit;
+        const bus: Bus = Object.keys(prefixes).reduce((memo, key) => {
+          const fn = prefixes[key] as MakeSimpleEmit;
 
-        return { ...memo, [key]: fn(action) };
-      }, {});
+          return { ...memo, [key]: fn(action) };
+        }, {});
 
-      await handler(action, bus, { emit, emitError, ...inject });
+        await handler(action, bus, { emit, emitError, ...inject });
+      }
     }, sources);
 
     const recover = (error: Error) => {
