@@ -12,8 +12,8 @@
   "devDependencies": {
     "@commitlint/config-conventional": "^7.5.0",
     "@most/types": "^1.0.1",
-    "@neezer/action": "^1.2.1",
-    "@neezer/action-combinators": "^1.0.3",
+    "@neezer/action": "^1.2.2",
+    "@neezer/action-combinators": "^1.0.4",
     "@types/nanoid": "^1.2.1",
     "@types/node": "^10.12.12",
     "prettier": "^1.15.3",
@@ -24,8 +24,8 @@
     "typescript": "^3.2.2"
   },
   "peerDependencies": {
-    "@neezer/action": "^1.2.1",
-    "@neezer/action-combinators": "^1.0.3"
+    "@neezer/action": "^1.2.2",
+    "@neezer/action-combinators": "^1.0.4"
   },
   "dependencies": {
     "@most/core": "^1.3.2",
