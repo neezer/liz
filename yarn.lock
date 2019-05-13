@@ -51,19 +51,18 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@neezer/action-combinators@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@neezer/action-combinators/-/action-combinators-1.0.1.tgz#6c31af3bfbac679612e46c26fb5cec49c56822c8"
-  integrity sha512-HKZJFeGUYhvxbjKFe/54TXbIE+qj+6620YEbBV8UDs3jNeTIr66dGqP57YUVDsDoGNRftTuhHKEkK8SCOR9PNw==
+"@neezer/action-combinators@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/@neezer/action-combinators/-/action-combinators-1.0.4.tgz#59b170c6e46aa58751fbe84573dc093c23d26aca"
+  integrity sha512-JmwzpzY41PvqQaBTbjZrdIJ5Wran20p10hCBINDS1v0MzNmXYEIdXAVDNuwZWRy6QjrZS8fF/WDAAScNrb6beg==
   dependencies:
     "@most/core" "^1.3.2"
     "@most/prelude" "^1.7.2"
-    "@neezer/action" "^1.0.1"
 
-"@neezer/action@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@neezer/action/-/action-1.0.1.tgz#f51bb3b7da4c6f491aae2c7a1e828e5fde933bc4"
-  integrity sha512-95nNNG8M0yatGS0N/aLmRkwyUiwY9hGHL4v7ZtK/s432VC5S9U2jg/keS3WjgPfB4hmYPlJJCrNYbSdDiTp2xQ==
+"@neezer/action@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.npmjs.org/@neezer/action/-/action-1.2.2.tgz#992de06ddba22e1a20ea2eeb2f8e97342fead82e"
+  integrity sha512-XeitXhmI6j69WZd34/1nOruRvhavIZ5GsM/gZKkp2LP2rQCJggEO6P9olNs4WHWZ8uteQxJdL5qC3B5DjpWLLQ==
   dependencies:
     nanoid "^2.0.0"
 
