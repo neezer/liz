@@ -34,10 +34,14 @@ type Accumulator = (
   action: Action
 ) => most.SeedValue<MatchingActionMap, ActionTypeMap | undefined>;
 
-export function bind(makeBus: IMakeBus, handlers: IHandler[], inject: Injects) {
+export function bind<T = {}>(
+  makeBus: IMakeBus,
+  handlers: IHandler[],
+  inject: T
+) {
   const { stream, emitError } = makeBus;
 
-  function handleTypes(params: IHandler) {
+  function handleTypes(params: IHandler<T>) {
     const { types, handler } = params;
     const ofTypes = most.mergeArray(types.map(type => ofType(type, stream)));
     const numTypes = types.length;
