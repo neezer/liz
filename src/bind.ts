@@ -9,18 +9,24 @@ import { Emit } from "./update";
 type CorrelationId = string;
 type HandlerId = string;
 
-interface IInjects {
+interface IBaseInjects {
   emit: Emit<Action>;
   emitError: Emit<Error>;
-  [name: string]: any;
 }
 
-export type MatchingActionMap = Record<CorrelationId, ActionTypeMap>;
-export type Handler = (prevAction: Action, bus: Bus, injects: IInjects) => void;
+type Injects<T = {}> = IBaseInjects & T;
 
-export interface IHandler {
+export type MatchingActionMap = Record<CorrelationId, ActionTypeMap>;
+
+export type Handler<T = {}> = (
+  prevAction: Action,
+  bus: Bus,
+  injects: Injects<T>
+) => Promise<void>;
+
+export interface IHandler<T = {}> {
   types: string[];
-  handler: Handler;
+  handler: Handler<T>;
 }
 
 type Accumulator = (
@@ -28,11 +34,7 @@ type Accumulator = (
   action: Action
 ) => most.SeedValue<MatchingActionMap, ActionTypeMap | undefined>;
 
-export function bind(
-  makeBus: IMakeBus,
-  handlers: IHandler[],
-  inject: Record<string, any> = {}
-) {
+export function bind(makeBus: IMakeBus, handlers: IHandler[], inject: Injects) {
   const { stream, emitError } = makeBus;
 
   function handleTypes(params: IHandler) {
