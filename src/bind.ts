@@ -36,7 +36,7 @@ type Accumulator = (
 
 export function bind<T = {}>(
   makeBus: IMakeBus,
-  handlers: IHandler[],
+  handlers: IHandler<T>[],
   inject: T
 ) {
   const { stream, emitError } = makeBus;
