@@ -123,7 +123,7 @@ export function bind<T = {}>(
     const recover = (error: Error) => {
       emitError(error);
 
-      return most.awaitPromises(effects);
+      return most.recoverWith(recover, most.awaitPromises(effects));
     };
 
     most.runEffects(
