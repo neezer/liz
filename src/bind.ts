@@ -1,5 +1,6 @@
 import * as most from "@most/core";
 import { newDefaultScheduler } from "@most/scheduler";
+import { Stream } from '@most/types';
 import { Action, ActionTypeMap, from } from "@neezer/action";
 import { ofType } from "@neezer/action-combinators";
 import nanoid from "nanoid";
@@ -120,7 +121,7 @@ export function bind<T = {}>(
       }
     }, sources);
 
-    const recover = (error: Error) => {
+    const recover: (error: Error) => Stream<void> = (error) => {
       emitError(error);
 
       return most.recoverWith(recover, most.awaitPromises(effects));
