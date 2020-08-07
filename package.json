@@ -11,6 +11,7 @@
   "license": "MIT",
   "devDependencies": {
     "@commitlint/config-conventional": "^7.5.0",
+    "@commitlint/travis-cli": "^9.1.1",
     "@most/types": "^1.0.1",
     "@neezer/action": "^1.2.2",
     "@neezer/action-combinators": "^1.0.4",
